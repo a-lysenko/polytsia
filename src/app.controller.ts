@@ -17,19 +17,9 @@ export class AppController {
     return 'OK';
   }
 
-  @Get('books')
-  getBooks(): string {
-    return JSON.stringify(this.dataService.getBooks());
-  }
-
   @Get('authors')
   getAuthors(): string {
     return JSON.stringify(this.dataService.getAuthors());
-  }
-
-  @Get('book/:id')
-  getBook(id: string): string {
-    return JSON.stringify(this.dataService.getBook(id));
   }
 
   @Get('author/:id')
