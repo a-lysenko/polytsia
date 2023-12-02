@@ -1,9 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { DataService } from '../database/data.service';
+import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateAuthorDto {
-    readonly name: string;
-    readonly books?: string[];
+  @IsString()
+  @IsNotEmpty()
+  readonly name: string;
+
+  @IsArray()
+  @IsOptional()
+  readonly books?: string[];
 }
 @Injectable()
 export class AuthorsService {
@@ -19,5 +25,13 @@ export class AuthorsService {
 
   createAuthor(author: CreateAuthorDto) {
     return this.dataService.createAuthor(author);
+  }
+
+  updateAuthor(id: string, author: CreateAuthorDto) {
+    return this.dataService.updateAuthor(id, author);
+  }
+
+  deleteAuthor(id: string) {
+    return this.dataService.deleteAuthor(id);
   }
 }

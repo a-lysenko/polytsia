@@ -152,4 +152,29 @@ export class DataService {
     );
     return id;
   }
+
+  updateAuthor(id: string, author: Omit<Author, 'id'>) {
+    const index = this.#data.authors.findIndex(author => author.id === id);
+    const isNew = index === -1;
+    const updatedAuthor: Author = {
+      id,
+    ...author,
+    books: author.books ?? [],
+    };
+    if (isNew) {
+      this.#data.authors.push(updatedAuthor);
+    } else {
+      this.#data.authors[index] = updatedAuthor;
+    }
+    return isNew;
+  }
+
+    deleteAuthor(id: string) {
+      const index = this.#data.authors.findIndex(author => author.id === id);
+      const wasFound = index !== -1
+      if (wasFound) {
+        this.#data.authors.splice(index, 1);
+      }
+      return wasFound;
+    }
 }
