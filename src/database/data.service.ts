@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Author, Book, Bookcase, Shelf } from './data.types';
-
-
+import { randomUUID } from 'node:crypto';
 export interface Data {
   books: Book[];
   authors: Author[];
@@ -138,7 +137,19 @@ export class DataService {
     return this.#data.authors;
   }
 
-    getAuthor(id: string): Author | undefined {
-        return this.#data.authors.find(author => author.id === id);
-    }
+  getAuthor(id: string): Author | undefined {
+    return this.#data.authors.find(author => author.id === id);
+  }
+
+  createAuthor(author: Omit<Author, 'id'>) {
+    const id = randomUUID();
+    this.#data.authors.push(
+      {
+        ...author,
+        id,
+        books: author.books ?? [],
+      }
+    );
+    return id;
+  }
 }
