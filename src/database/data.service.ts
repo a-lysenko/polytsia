@@ -163,6 +163,7 @@ export class DataService {
     }
 
     getBook(id: string): Book | undefined {
+        console.log('getBook', id, this.#data.books.slice(0, 2));
         return this.#data.books.find(book => book.id === id);
     }
 
