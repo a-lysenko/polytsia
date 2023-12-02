@@ -1,40 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { Author, Book, Bookcase, Shelf } from './data.types';
 
-interface Book {
-    id: string
-    title: string;
-    author: string;
-    authorId?: string;
-    publisher?: string;
-    publisherId?: string;
-    isbn?: string;
-    isbn13?: string;
-    pages?: number;
-    year?: number;
-    rating?: number;
-    desc?: string;
-    tags?: string[];
-}
 
-interface Author {
-    id: string;
-    name: string;
-    books?: string[];
-}
-
-interface Bookcase {
-    id: string;
-    name: string;
-    shelves?: string[];
-}
-
-interface Shelf {
-    id: string;
-    name: string;
-    books?: string[];
-}
-
-interface Data {
+export interface Data {
     books: Book[];
     authors: Author[];
     bookcases: Bookcase[];
@@ -163,7 +131,6 @@ export class DataService {
     }
 
     getBook(id: string): Book | undefined {
-        console.log('getBook', id, this.#data.books.slice(0, 2));
         return this.#data.books.find(book => book.id === id);
     }
 

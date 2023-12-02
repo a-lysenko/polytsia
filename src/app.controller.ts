@@ -16,14 +16,4 @@ export class AppController {
     this.dataService.init();
     return 'OK';
   }
-
-  @Get('authors')
-  getAuthors(): string {
-    return JSON.stringify(this.dataService.getAuthors());
-  }
-
-  @Get('author/:id')
-  getAuthor(id: string): string {
-    return JSON.stringify(this.dataService.getAuthor(id));
-  }
 }
