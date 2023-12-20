@@ -1,26 +1,42 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from '@nestjs/common';
 import { AuthorsService, CreateAuthorDto } from './authors.service';
 import { Response } from 'express';
+import { ApiOperation, ApiParam, ApiFoundResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('authors')
 @Controller('authors')
 export class AuthorsController {
   constructor(private authorsService: AuthorsService) { }
   @Get()
+  @ApiOperation({ summary: 'Find authors' })
+  @ApiFoundResponse({ type: 'Author', isArray: true })
   getAuthors() {
     return JSON.stringify(this.authorsService.getAuthors());
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Find author (by id)' })
+  @ApiParam({name: 'id', description: 'Author id', type: 'string'})
+  @ApiResponse({
+    status: 200,
+    description: 'The found record',
+    type: 'Author'
+  })
   getAuthor(@Param('id') id: string) {
     return JSON.stringify(this.authorsService.getAuthor(id));
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create author' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Created successfully', type: 'id' })
   createAuthor(@Body() body: CreateAuthorDto) {
     return this.authorsService.createAuthor(body);
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update author' })
+  @ApiParam({name: 'id', description: 'Author id', type: 'string'})
+  @ApiResponse({ status: HttpStatus.OK, description: 'Created successfully' })
   updateAuthor(
     @Param('id') id: string, @Body() body: CreateAuthorDto,
     @Res({ passthrough: true }) res: Response
@@ -33,6 +49,8 @@ export class AuthorsController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete author' })
+  @ApiParam({name: 'id', description: 'Author id', type: 'string'})
   deleteAuthor(
     @Param('id') id: string,
   ) {
