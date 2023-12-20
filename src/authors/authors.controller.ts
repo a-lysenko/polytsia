@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from '@nestjs/common';
 import { AuthorsService, CreateAuthorDto } from './authors.service';
 import { Response } from 'express';
-import { ApiOperation, ApiParam, ApiFoundResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('authors')
 @Controller('authors')
@@ -9,7 +9,7 @@ export class AuthorsController {
   constructor(private authorsService: AuthorsService) { }
   @Get()
   @ApiOperation({ summary: 'Find authors' })
-  @ApiFoundResponse({ type: 'Author', isArray: true })
+  @ApiResponse({ status: HttpStatus.OK, type: 'Author', isArray: true })
   getAuthors() {
     return JSON.stringify(this.authorsService.getAuthors());
   }
