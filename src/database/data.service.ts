@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Author, Book, Bookcase, Shelf } from './data.types';
+import { Author, Book, BookcaseModel, Shelf } from './data.types';
 import { randomUUID } from 'node:crypto';
+
 export interface Data {
   books: Book[];
   authors: Author[];
-  bookcases: Bookcase[];
+  bookcases: BookcaseModel[];
   shelves: Shelf[];
 }
 
@@ -16,6 +17,7 @@ export class DataService {
     bookcases: [],
     shelves: []
   };
+
   init() {
     this.#data = {
       books: [
@@ -158,8 +160,8 @@ export class DataService {
     const isNew = index === -1;
     const updatedAuthor: Author = {
       id,
-    ...author,
-    books: author.books ?? [],
+      ...author,
+      books: author.books ?? [],
     };
     if (isNew) {
       this.#data.authors.push(updatedAuthor);
@@ -169,12 +171,62 @@ export class DataService {
     return isNew;
   }
 
-    deleteAuthor(id: string) {
-      const index = this.#data.authors.findIndex(author => author.id === id);
-      const wasFound = index !== -1
-      if (wasFound) {
-        this.#data.authors.splice(index, 1);
-      }
-      return wasFound;
+  deleteAuthor(id: string) {
+    const index = this.#data.authors.findIndex(author => author.id === id);
+    const wasFound = index !== -1
+    if (wasFound) {
+      this.#data.authors.splice(index, 1);
     }
+    return wasFound;
+  }
+
+  getBookcases(): BookcaseModel[] {
+    return this.#data.bookcases;
+  }
+
+  getBookcase(id: string): BookcaseModel | undefined {
+    return this.#data.bookcases.find(bookcase => bookcase.id === id);
+  }
+
+  createBookcase(
+    bookcase: Omit<BookcaseModel, 'id' | 'shelves'> & Partial<Pick<BookcaseModel, 'shelves'>>
+  ) {
+    const id = randomUUID();
+    this.#data.bookcases.push(
+      {
+        ...bookcase,
+        id,
+        shelves: bookcase.shelves ?? [],
+      }
+    );
+    return id;
+  }
+
+  updateBookcase(
+    id: string,
+    bookcase: Omit<BookcaseModel, 'id' | 'shelves'> & Partial<Pick<BookcaseModel, 'shelves'>>
+  ) {
+    const index = this.#data.bookcases.findIndex(bookcase => bookcase.id === id);
+    const isNew = index === -1;
+    const updatedBookcase: BookcaseModel = {
+      id,
+      ...bookcase,
+      shelves: bookcase.shelves ?? [],
+    };
+    if (isNew) {
+      this.#data.bookcases.push(updatedBookcase);
+    } else {
+      this.#data.bookcases[index] = updatedBookcase;
+    }
+    return isNew;
+  }
+
+  deleteBookcase(id: string) {
+    const index = this.#data.bookcases.findIndex(bookcase => bookcase.id === id);
+    const wasFound = index !== -1
+    if (wasFound) {
+      this.#data.bookcases.splice(index, 1);
+    }
+    return wasFound;
+  }
 }

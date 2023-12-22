@@ -20,10 +20,10 @@ export interface Author {
   books?: string[];
 }
 
-export interface Bookcase {
+export interface BookcaseModel {
   id: string;
   name: string;
-  shelves?: string[];
+  shelves: string[];
 }
 
 export interface Shelf {

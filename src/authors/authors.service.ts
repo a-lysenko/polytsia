@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataService } from '../database/data.service';
 import { IsArray, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { ApiPropertyOptional } from '@nestjs/swagger/dist/decorators/api-property.decorator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateAuthorDto {
 
