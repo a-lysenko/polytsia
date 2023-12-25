@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Res } from '@nestjs/common';
 import {
   ApiBadRequestResponse, ApiBody,
   ApiCreatedResponse,
@@ -10,6 +10,7 @@ import {
 import { Bookcase } from './bookcases.entity';
 import { BookcasesService } from './bookcases.service';
 import { CreateBookcaseDto } from './bookcases.dto';
+import { Response } from 'express';
 
 @ApiTags('bookcases')
 @Controller('bookcases')
@@ -91,13 +92,15 @@ export class BookcasesController {
     description: 'The bookcase could not be updated'
   })
   updateBookcase(
-    @Param('id') id: string, @Body() body: CreateBookcaseDto
+    @Param('id') id: string,
+    @Body() body: CreateBookcaseDto,
+    @Res({ passthrough: true }) res: Response
   ) {
-    const isNew = this.bookcasesService.updateBookcase(id, body);
-    // @ts-ignore
+    const { isNew, id: itemId } = this.bookcasesService.updateBookcase(id, body);
     res.status(
-      (isNew ? HttpStatus.CREATED : HttpStatus.OK) as number
+      isNew ? HttpStatus.CREATED : HttpStatus.OK
     );
+    res.send({ id: itemId });
   }
 
   @Delete(':id')

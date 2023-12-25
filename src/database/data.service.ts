@@ -187,8 +187,10 @@ export class DataService {
   ) {
     const index = this.#data[collection].findIndex(item => item.id === id);
     const isNew = index === -1;
+
+    const updatedItemId = isNew ? randomUUID() : id;
     const updatedItem = {
-      id,
+      id: updatedItemId,
       ...item,
     };
     if (isNew) {
@@ -197,6 +199,6 @@ export class DataService {
     } else {
       this.#data[collection][index] = updatedItem;
     }
-    return { isNew, id: isNew ? index : id };
+    return { isNew, id: updatedItemId };
   }
 }

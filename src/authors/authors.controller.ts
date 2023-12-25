@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from '@nestjs/common';
 import { AuthorsService, CreateAuthorDto } from './authors.service';
 import { Response } from 'express';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('authors')
 @Controller('authors')
@@ -17,13 +17,9 @@ export class AuthorsController {
   @Get(':id')
   @ApiOperation({ summary: 'Find author (by id)' })
   @ApiParam({name: 'id', description: 'Author id', type: 'string'})
-  @ApiResponse({
-    status: 200,
-    description: 'The found record',
-    type: 'Author'
-  })
+  @ApiOkResponse({ type: 'Author' })
   getAuthor(@Param('id') id: string) {
-    return JSON.stringify(this.authorsService.getAuthor(id));
+    return this.authorsService.getAuthor(id);
   }
 
   @Post()
@@ -41,11 +37,12 @@ export class AuthorsController {
     @Param('id') id: string, @Body() body: CreateAuthorDto,
     @Res({ passthrough: true }) res: Response
   ) {
-    const isNew = this.authorsService.updateAuthor(id, body);
+    const { isNew, id: itemId } = this.authorsService.updateAuthor(id, body);
     // @ts-ignore
     res.status(
-      (isNew ? HttpStatus.CREATED : HttpStatus.OK) as number
+      (isNew ? HttpStatus.CREATED : HttpStatus.OK)
     );
+    res.send({ id: itemId });
   }
 
   @Delete(':id')
