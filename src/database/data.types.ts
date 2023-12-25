@@ -1,4 +1,4 @@
-export interface Book {
+export interface BookModel {
   id: string
   title: string;
   author: string;
@@ -14,10 +14,10 @@ export interface Book {
   tags?: string[];
 }
 
-export interface Author {
+export interface AuthorModel {
   id: string;
   name: string;
-  books?: string[];
+  books: string[];
 }
 
 export interface BookcaseModel {
@@ -26,8 +26,14 @@ export interface BookcaseModel {
   shelves: string[];
 }
 
-export interface Shelf {
+export interface ShelfModel {
   id: string;
   name: string;
-  books?: string[];
+  books: string[];
 }
+
+export type BookcaseUpdateModel = Omit<BookcaseModel, 'id'>;
+export type AuthorUpdateModel = Omit<AuthorModel, 'id'>;
+export type BookUpdateModel = Omit<BookModel, 'id'>;
+export type ShelfUpdateModel = Omit<ShelfModel, 'id'>;
+// type UpdateModel = BookcaseUpdateModel | AuthorUpdateModel | BookUpdateModel | ShelfUpdateModel;

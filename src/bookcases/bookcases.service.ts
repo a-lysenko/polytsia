@@ -9,22 +9,29 @@ export class BookcasesService {
   }
 
   getBookcases(): Bookcase[] {
-    return this.dataService.getBookcases();
+    return this.dataService.getAllCRUD('bookcases');
   }
 
   getBookcase(id: string): Bookcase | undefined {
-    return this.dataService.getBookcase(id);
+    return this.dataService.getCRUD('bookcases', id);
   }
 
   createBookcase(bookcase: CreateBookcaseDto) {
-    return this.dataService.createBookcase(bookcase);
+    return this.dataService.createCRUD(
+      'bookcases',
+      {...bookcase, shelves: bookcase.shelves ?? []}
+    );
   }
 
   updateBookcase(id: string, bookcase: CreateBookcaseDto) {
-    return this.dataService.updateBookcase(id, bookcase);
+    return this.dataService.updateCRUD(
+      'bookcases',
+      id,
+      {...bookcase, shelves: bookcase.shelves ?? []}
+    );
   }
 
   deleteBookcase(id: string) {
-    return this.dataService.deleteBookcase(id);
+    return this.dataService.deleteCRUD('bookcases', id);
   }
 }

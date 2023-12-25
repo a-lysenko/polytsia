@@ -24,22 +24,31 @@ export class AuthorsService {
   constructor(private dataService: DataService) {}
 
   getAuthors() {
-    return this.dataService.getAuthors();
+    return this.dataService.getAllCRUD('authors');
   }
 
   getAuthor(id: string) {
-    return this.dataService.getAuthor(id);
+    return this.dataService.getCRUD('authors', id);
   }
 
   createAuthor(author: CreateAuthorDto) {
-    return this.dataService.createAuthor(author);
+    return this.dataService.createCRUD(
+      'authors',
+      {
+        ...author,
+        books: author.books ?? []}
+    );
   }
 
   updateAuthor(id: string, author: CreateAuthorDto) {
-    return this.dataService.updateAuthor(id, author);
+    return this.dataService.updateCRUD(
+      'authors',
+      id,
+      { ...author,  books: author.books ?? [] }
+    )
   }
 
   deleteAuthor(id: string) {
-    return this.dataService.deleteAuthor(id);
+    return this.dataService.deleteCRUD('authors', id);
   }
 }

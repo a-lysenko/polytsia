@@ -1,13 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { Author, Book, BookcaseModel, Shelf } from './data.types';
+import {
+  AuthorModel,
+  BookModel,
+  BookcaseModel,
+  ShelfModel,
+  AuthorUpdateModel,
+  BookUpdateModel,
+  ShelfUpdateModel, BookcaseUpdateModel
+} from './data.types';
 import { randomUUID } from 'node:crypto';
 
 export interface Data {
-  books: Book[];
-  authors: Author[];
+  books: BookModel[];
+  authors: AuthorModel[];
   bookcases: BookcaseModel[];
-  shelves: Shelf[];
+  shelves: ShelfModel[];
 }
+
+type UpdateModelMap = {
+  books: BookUpdateModel;
+  authors: AuthorUpdateModel;
+  bookcases: BookcaseUpdateModel;
+  shelves: ShelfUpdateModel;
+}
+
+// type UpdateModels =
+//   | { books: BookUpdateModel; }
+//   | { authors: AuthorUpdateModel; }
+//   | { bookcases: BookcaseUpdateModel; }
+//   | { shelves: ShelfUpdateModel; };
 
 @Injectable()
 export class DataService {
@@ -127,106 +148,55 @@ export class DataService {
     return this.#data;
   }
 
-  getBooks(): Book[] {
-    return this.#data.books;
+  getAllCRUD<T extends keyof Data>(collection: T) {
+    return this.#data[collection];
   }
 
-  getBook(id: string): Book | undefined {
-    return this.#data.books.find(book => book.id === id);
+  getCRUD<T extends keyof Data>(collection: T, id: string): Data[T][number] | undefined {
+    return this.#data[collection].find(item => item.id === id);
   }
 
-  getAuthors(): Author[] {
-    return this.#data.authors;
-  }
-
-  getAuthor(id: string): Author | undefined {
-    return this.#data.authors.find(author => author.id === id);
-  }
-
-  createAuthor(author: Omit<Author, 'id'>) {
-    const id = randomUUID();
-    this.#data.authors.push(
-      {
-        ...author,
-        id,
-        books: author.books ?? [],
-      }
-    );
-    return id;
-  }
-
-  updateAuthor(id: string, author: Omit<Author, 'id'>) {
-    const index = this.#data.authors.findIndex(author => author.id === id);
-    const isNew = index === -1;
-    const updatedAuthor: Author = {
-      id,
-      ...author,
-      books: author.books ?? [],
-    };
-    if (isNew) {
-      this.#data.authors.push(updatedAuthor);
-    } else {
-      this.#data.authors[index] = updatedAuthor;
-    }
-    return isNew;
-  }
-
-  deleteAuthor(id: string) {
-    const index = this.#data.authors.findIndex(author => author.id === id);
+  deleteCRUD<T extends keyof Data>(collection: T, id: string) {
+    const index = this.#data[collection].findIndex(item => item.id === id);
     const wasFound = index !== -1
     if (wasFound) {
-      this.#data.authors.splice(index, 1);
+      this.#data[collection].splice(index, 1);
     }
     return wasFound;
   }
 
-  getBookcases(): BookcaseModel[] {
-    return this.#data.bookcases;
-  }
-
-  getBookcase(id: string): BookcaseModel | undefined {
-    return this.#data.bookcases.find(bookcase => bookcase.id === id);
-  }
-
-  createBookcase(
-    bookcase: Omit<BookcaseModel, 'id' | 'shelves'> & Partial<Pick<BookcaseModel, 'shelves'>>
+  createCRUD<T extends keyof Data>(
+    collection: T,
+    item: UpdateModelMap[T],
   ) {
     const id = randomUUID();
-    this.#data.bookcases.push(
+    this.#data[collection].push(
+      // @ts-ignore
       {
-        ...bookcase,
+        ...item,
         id,
-        shelves: bookcase.shelves ?? [],
       }
     );
     return id;
   }
 
-  updateBookcase(
+  updateCRUD<T extends keyof Data>(
+    collection: T,
     id: string,
-    bookcase: Omit<BookcaseModel, 'id' | 'shelves'> & Partial<Pick<BookcaseModel, 'shelves'>>
+    item: UpdateModelMap[T],
   ) {
-    const index = this.#data.bookcases.findIndex(bookcase => bookcase.id === id);
+    const index = this.#data[collection].findIndex(item => item.id === id);
     const isNew = index === -1;
-    const updatedBookcase: BookcaseModel = {
+    const updatedItem = {
       id,
-      ...bookcase,
-      shelves: bookcase.shelves ?? [],
+      ...item,
     };
     if (isNew) {
-      this.#data.bookcases.push(updatedBookcase);
+      // @ts-ignore
+      this.#data[collection].push(updatedItem);
     } else {
-      this.#data.bookcases[index] = updatedBookcase;
+      this.#data[collection][index] = updatedItem;
     }
-    return isNew;
-  }
-
-  deleteBookcase(id: string) {
-    const index = this.#data.bookcases.findIndex(bookcase => bookcase.id === id);
-    const wasFound = index !== -1
-    if (wasFound) {
-      this.#data.bookcases.splice(index, 1);
-    }
-    return wasFound;
+    return { isNew, id: isNew ? index : id };
   }
 }

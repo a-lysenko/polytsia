@@ -8,10 +8,10 @@ export class BooksService {
   }
 
   getBooks() {
-    return this.dataService.getBooks();
+    return this.dataService.getAllCRUD('books');
   }
 
   getBook(id: string) {
-    return this.dataService.getBook(id);
+    return this.dataService.getCRUD('books', id);
   }
 }
